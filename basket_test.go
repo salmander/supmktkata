@@ -3,7 +3,7 @@ package supmktkata_test
 import (
 	"testing"
 
-	"github.com/burrbd/supmktkata"
+	"github.com/salmander/supmktkata"
 )
 
 func TestCalculateCostOfSingleItem(t *testing.T) {

@@ -50,6 +50,60 @@ func (b *Basket) AddItem(c Costs) {
 // Total returns the total cost of basket and handles promotions
 // (see README.md for promotion details).
 func (b *Basket) Total() float64 {
-	// Implment method
-	return 0.00
+	total := 0.00
+
+	// Calculate meal deals
+	mealDealsTotal := calculateMealDealsTotal(b)
+
+	// Calculate total for the remaining items
+	for _, item := range b.Items {
+		total += item.Cost()
+	}
+	return total + mealDealsTotal
+}
+
+func (b *Basket) RemoveItem(c Costs) {
+	for i, v := range b.Items {
+		if v.Cost() == c.Cost() {
+			b.Items = append(b.Items[:i], b.Items[i+1:]...)
+			return
+		}
+	}
+}
+
+func calculateMealDealsTotal(b *Basket) float64 {
+	mealDeal, crisps, sandwiches, drinks := 0, 0, 0, 0
+	c := Crisps{}
+	s := Sandwich{}
+	d := Drink{}
+
+	for i := 0; i < len(b.Items); i++ {
+		item := b.Items[i]
+		// Count Crisps in the basket
+		if item.Cost() == c.Cost() {
+			crisps++
+		}
+
+		// Count Sandwiches in the basket
+		if item.Cost() == s.Cost() {
+			sandwiches++
+		}
+
+		// Count Drinks in the basket
+		if item.Cost() == d.Cost() {
+			drinks++
+		}
+
+		if crisps > 0 && sandwiches > 0 && drinks > 0 {
+			mealDeal++
+			// Remove one of each item from the basket
+			b.RemoveItem(s)
+			b.RemoveItem(c)
+			b.RemoveItem(d)
+
+			// Reset all the individual counters
+			i, crisps, sandwiches, drinks = -1, 0, 0, 0
+		}
+	}
+	return float64(mealDeal * 3)
 }
